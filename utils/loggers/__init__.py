@@ -92,7 +92,7 @@ class Loggers():
             files = sorted(self.save_dir.glob('val*.jpg'))
             self.wandb.log({"Validation": [wandb.Image(str(f), caption=f.name) for f in files]})
 
-    def on_fit_epoch_end(self, vals, epoch, best_fitness, fi):
+    def on_fit_epoch_end(self, vals, epoch):
         # Callback runs at the end of each fit (train+val) epoch
         keys = sorted(list(vals.keys()))
         vs = [vals[k] for k in keys]

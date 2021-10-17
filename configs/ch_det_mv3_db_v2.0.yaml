@@ -16,13 +16,13 @@ Global:
   save_res_path: ./output/det_db/predicts_db.txt
 
 Hyp:
-  lr0: 0.001  # initial learning rate (SGD=1E-2, Adam=1E-3)
+  lr0: 0.0001  # initial learning rate (SGD=1E-2, Adam=1E-3)
   lrf: 0.2  # final OneCycleLR learning rate (lr0 * lrf)
   momentum: 0.937  # SGD momentum/Adam beta1
   weight_decay: 0.0005  # optimizer weight decay 5e-4
   warmup_epochs: 3.0  # warmup epochs (fractions ok)
   warmup_momentum: 0.8  # warmup initial momentum
-  warmup_bias_lr: 0.1  # warmup initial bias lr
+  warmup_bias_lr: 0.01  # warmup initial bias lr
   box: 0.05  # box loss gain
   cls: 0.5  # cls loss gain
   cls_pw: 1.0  # cls BCELoss positive_weight
@@ -96,7 +96,8 @@ Metric:
 Data:
   train:
     name: BaseDataSet
-    path: ../datasets/icdar2015/text_localization/ch4_training_images
+    path: ../datasets/icdar2019_art/train_images
+    workers: 8
     ratio_list: [1.0]
     transforms:
       - DecodeImage: # load image
@@ -130,6 +131,7 @@ Data:
   val:
     name: BaseDataSet
     path: ../datasets/icdar2015/text_localization/ch4_test_images
+    workers: 8
     transforms:
       - DecodeImage: # load image
           img_mode: BGR

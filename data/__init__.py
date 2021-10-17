@@ -37,7 +37,7 @@ class _RepeatSampler(object):
         while True:
             yield from iter(self.sampler)
 
-def build_dataloader(cfg, mode, batch_size, rank=-1, workers=8):
+def build_dataloader(cfg, mode, batch_size, rank=-1):
     # Make sure only the first process in DDP process the dataset first, and the following others can use the cache
     support_dict = [
         'BaseDataSet', 'SimpleDataSet', 'LMDBDataSet', 'PGDataSet', 'PubTabDataSet'
@@ -47,6 +47,7 @@ def build_dataloader(cfg, mode, batch_size, rank=-1, workers=8):
         assert cfg[mode]['name'] in support_dict
         dataset = eval(cfg[mode]['name'])(cfg[mode], mode=mode)
 
+    workers = cfg[mode]['workers']
     batch_size = min(batch_size, len(dataset))
     nw = min([os.cpu_count(), batch_size if batch_size > 1 else 0, workers])  # number of workers
     sampler = torch.utils.data.distributed.DistributedSampler(dataset) if rank != -1 else None
