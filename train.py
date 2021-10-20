@@ -256,7 +256,7 @@ def train(cfg,  # path/to/hyp.yaml or hyp dictionary
             if (not noval and epoch%val_period==0) or final_epoch:
                 ckpt = {'epoch': epoch,
                         'best_fitness': best_fitness,
-                        'model': deepcopy(de_parallel(model)).state_dict(),
+                        'state_dict': deepcopy(de_parallel(model)).state_dict(),
                         'ema': deepcopy(ema.ema).state_dict(),
                         'updates': ema.updates,
                         'optimizer': optimizer.state_dict()}
@@ -345,7 +345,8 @@ def main():
         assert os.path.isfile(ckpt), 'ERROR: --resume checkpoint does not exist'
         with open(Path(ckpt).parent.parent / 'opt.yaml') as f:
             opt = argparse.Namespace(**yaml.safe_load(f))  # replace
-        opt.cfg, opt.weights, opt.resume = '', ckpt, True  # reinstate
+        opt.cfg = str(Path(ckpt).parent.parent / 'cfg.yaml')
+        opt.weights, opt.resume = ckpt, True  # reinstate
         LOGGER.info(f'Resuming training from {ckpt}')
     else:
         opt.data, opt.cfg = check_file(opt.data), check_yaml(opt.cfg)  # check YAMLs
