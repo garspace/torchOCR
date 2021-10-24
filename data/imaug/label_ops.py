@@ -40,6 +40,8 @@ class DetLabelEncode(object):
         pass
 
     def __call__(self, data):
+        img = data['image']
+        src_h, src_w, _ = img.shape
         label = data['label']
         label = json.loads(label)
         nBox = len(label)
@@ -49,7 +51,11 @@ class DetLabelEncode(object):
             txt = label[bno]['transcription']
             boxes.append(box)
             txts.append(txt)
+            box = np.array(box)
+            xmin, ymin, xmax, ymax = box[:,0].min(), box[:,1].min(), box[:,0].max(), box[:,1].max()
             if txt in ['*', '###']:
+                txt_tags.append(True)
+            elif xmin < 0 or ymin < 0 or xmax > src_w-1 or ymax > src_h-1:
                 txt_tags.append(True)
             else:
                 txt_tags.append(False)
